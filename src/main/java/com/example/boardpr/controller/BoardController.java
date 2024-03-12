@@ -8,6 +8,7 @@ import com.example.boardpr.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,9 +22,10 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Board> list = boardService.getList();
-        model.addAttribute("boardList", list);
+    public String list(Model model,
+                       @RequestParam(value ="page", defaultValue = "0") int page) {
+        Page<Board> paging = boardService.getList(page);
+        model.addAttribute("paging", paging);
         return "board_list";
     }
 
