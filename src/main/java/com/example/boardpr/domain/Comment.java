@@ -25,4 +25,7 @@ public class Comment {
 
     @ManyToOne
     private Board board;
+
+    @ManyToOne
+    private User user;
 }
