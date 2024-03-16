@@ -1,6 +1,7 @@
 package com.example.boardpr.service;
 
 import com.example.boardpr.domain.Board;
+import com.example.boardpr.domain.User;
 import com.example.boardpr.exception.NotFoundException;
 import com.example.boardpr.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,24 @@ public class BoardService {
         }
     }
 
-    public void create(String title, String content) {
+    public void create(String title, String content, User user) {
         Board build = Board.builder()
                 .title(title)
                 .content(content)
                 .createDate(LocalDateTime.now())
+                .user(user)
                 .build();
         this.boardRepository.save(build);
+    }
+
+    public void modify(Board board, String title, String content) {
+        board.setTitle(title);
+        board.setContent(content);
+        board.setModifyDate(LocalDateTime.now());
+        this.boardRepository.save(board);
+    }
+
+    public void delete(Board board) {
+        this.boardRepository.delete(board);
     }
 }

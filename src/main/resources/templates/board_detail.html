@@ -4,11 +4,28 @@
     <h2 class="border-bottom py-2" th:text="${board.title}"></h2>
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text" style="white-space: pre-line;" th:text="${board.title}"></div>
+            <div class="card-text" style="white-space: pre-line;" th:text="${board.content}"></div>
             <div class="d-flex justify-content-end">
+                <div th:if="${board.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                    <div class="mb-2">modified at</div>
+                    <div th:text="${#temporals.format(board.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${board.user != null}" th:text="${board.user.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(board.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
+            </div>
+            <div class="my-3">
+                <a th:href="@{|/board/modify/${board.getId()}|}" class="btn btn-sm btn-outline-secondary"
+                   th:sec:authorize="isAuthenticated"
+                   th:if="${board.user != null and #authorization.getAuthentication().getName() == board.user.getUsername()}"
+                   th:text="수정"></a>
+                <a href="javascript:void(0);" th:data-uri="@{|/board/delete/${board.getId()}|}" class="delete btn btn-sm btn-outline-secondary"
+                   th:sec:authorize="isAuthenticated"
+                   th:if="${board.user != null and #authorization.getAuthentication().getName() == board.user.getUsername()}"
+                   th:text="삭제"></a>
             </div>
         </div>
     </div>
@@ -20,9 +37,27 @@
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${comment.content}"></div>
             <div class="d-flex justify-content-end">
+                <div th:if="${comment.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                    <div class="mb-2">modified at</div>
+                    <div th:text="${#temporals.format(comment.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${comment.user != null}" th:text="${comment.user.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
+            </div>
+            <div class="my-3">
+                <a th:href="@{|/comment/modify/${comment.getId()}|}" class="btn btn-sm btn-outline-secondary"
+                   th:sec:authorize="isAuthenticated"
+                   th:if="${comment.user != null and #authorization.getAuthentication().getName() == comment.user.username}"
+                   th:text="수정"></a>
+                <a href="javascript:void(0);" th:data-uri="@{|/comment/delete/${comment.getId()}|}"
+                   class="delete btn btn-sm btn-outline-secondary"
+                   th:sec:authorize="isAuthenticated"
+                   th:if="${comment.user != null and #authorization.getAuthentication().getName() == comment.user.username}"
+                   th:text="삭제"></a>
             </div>
         </div>
     </div>
@@ -32,9 +67,19 @@
         <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
             <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
         </div>
-        <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+            <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+            <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
 </div>
-</body>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
 </html>

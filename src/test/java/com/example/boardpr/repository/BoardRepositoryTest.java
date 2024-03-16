@@ -41,7 +41,7 @@ class BoardRepositoryTest {
         for (int i = 0; i < 300; i++) {
             String title = String.format("This is test data : [%03d]", i);
             String content = "내용은 글쎄요.. 없는 거 같은데 일단 써 보죠";
-            this.boardService.create(title, content);
+            this.boardService.create(title, content, null);
         }
     }
 }
