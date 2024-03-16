@@ -45,4 +45,15 @@ public class BoardService {
                 .build();
         this.boardRepository.save(build);
     }
+
+    public void modify(Board board, String title, String content) {
+        board.setTitle(title);
+        board.setContent(content);
+        board.setModifyDate(LocalDateTime.now());
+        this.boardRepository.save(board);
+    }
+
+    public void delete(Board board) {
+        this.boardRepository.delete(board);
+    }
 }

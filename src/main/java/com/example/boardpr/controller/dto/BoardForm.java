@@ -1,6 +1,5 @@
 package com.example.boardpr.controller.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -14,6 +13,6 @@ public class BoardForm {
     private String title;
 
     @NotEmpty(message = "내용은 필수로 입력해야 합니다.")
-    @Min(10)
+    @Size(min = 10)
     private String content;
 }
