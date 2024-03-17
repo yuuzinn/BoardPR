@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CommentService {
     private final CommentRepository commentRepository;
 
-    public void create(Board board, String content, User user) {
+    public Comment create(Board board, String content, User user) {
         Comment build = Comment.builder()
                 .content(content)
                 .createDate(LocalDateTime.now())
@@ -24,6 +24,7 @@ public class CommentService {
                 .user(user)
                 .build();
         this.commentRepository.save(build);
+        return build;
     }
 
     public Comment getComment(Long id) {
