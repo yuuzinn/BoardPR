@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -32,4 +33,7 @@ public class Board extends BaseEntity {
 
     @ManyToOne
     private User user;
+
+    @ManyToMany
+    Set<User> userHeart;
 }

@@ -109,4 +109,13 @@ public class BoardController {
         this.boardService.delete(question);
         return "redirect:/";
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/heart/{id}")
+    public String boardHeart(Principal principal, @PathVariable("id") Long id) {
+        Board board = this.boardService.getBoard(id);
+        User user = this.userService.getUser(principal.getName());
+        this.boardService.heart(board, user);
+        return String.format("redirect:/board/detail/%s", id);
+    }
 }

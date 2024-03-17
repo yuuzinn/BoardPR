@@ -18,6 +18,11 @@
                 </div>
             </div>
             <div class="my-3">
+                <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/board/heart/${board.getId()}|}">
+                    좋아요
+                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(board.userHeart)}"></span>
+                </a>
                 <a th:href="@{|/board/modify/${board.getId()}|}" class="btn btn-sm btn-outline-secondary"
                    th:sec:authorize="isAuthenticated"
                    th:if="${board.user != null and #authorization.getAuthentication().getName() == board.user.getUsername()}"
@@ -49,6 +54,11 @@
                 </div>
             </div>
             <div class="my-3">
+                <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/comment/heart/${comment.getId()}|}">
+                    좋아요
+                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(comment.userHeart)}"></span>
+                </a>
                 <a th:href="@{|/comment/modify/${comment.getId()}|}" class="btn btn-sm btn-outline-secondary"
                    th:sec:authorize="isAuthenticated"
                    th:if="${comment.user != null and #authorization.getAuthentication().getName() == comment.user.username}"
@@ -77,6 +87,14 @@
     Array.from(delete_elements).forEach(function(element) {
         element.addEventListener('click', function() {
             if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+    const recommend_elements = document.getElementsByClassName("recommend");
+    Array.from(recommend_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("'좋아요'를 누를까요?")) {
                 location.href = this.dataset.uri;
             };
         });

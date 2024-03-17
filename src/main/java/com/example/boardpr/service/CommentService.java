@@ -44,4 +44,9 @@ public class CommentService {
     public void delete(Comment answer) {
         this.commentRepository.delete(answer);
     }
+
+    public void heart(Comment comment, User user) {
+        comment.getUserHeart().add(user);
+        this.commentRepository.save(comment);
+    }
 }

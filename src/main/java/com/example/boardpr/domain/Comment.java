@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -27,4 +29,7 @@ public class Comment extends BaseEntity {
 
     @ManyToOne
     private User user;
+
+    @ManyToMany
+    Set<User> userHeart;
 }

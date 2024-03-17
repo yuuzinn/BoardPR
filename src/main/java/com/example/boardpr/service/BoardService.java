@@ -56,4 +56,9 @@ public class BoardService {
     public void delete(Board board) {
         this.boardRepository.delete(board);
     }
+
+    public void heart(Board board, User user) {
+        board.getUserHeart().add(user);
+        this.boardRepository.save(board);
+    }
 }

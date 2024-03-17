@@ -89,4 +89,14 @@ public class CommentController {
         this.commentService.delete(comment);
         return String.format("redirect:/board/detail/%s", comment.getBoard().getId());
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/heart/{id}")
+    public String commentHeart(Principal principal,
+                               @PathVariable("id") Long id) {
+        Comment comment = this.commentService.getComment(id);
+        User user = this.userService.getUser(principal.getName());
+        this.commentService.heart(comment, user);
+        return String.format("redirect:/board/detail/%s", comment.getBoard().getId());
+    }
 }
