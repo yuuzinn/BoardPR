@@ -1,13 +1,16 @@
 package com.example.boardpr.service;
 
 import com.example.boardpr.domain.Board;
+import com.example.boardpr.domain.Comment;
 import com.example.boardpr.domain.User;
 import com.example.boardpr.exception.NotFoundException;
 import com.example.boardpr.repository.BoardRepository;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,11 +23,12 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public Page<Board> getList(int page) {
+    public Page<Board> getList(int page, String keyword) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.boardRepository.findAll(pageRequest);
+        Specification<Board> spec = search(keyword);
+        return this.boardRepository.findAll(spec, pageRequest);
     }
 
     public Board getBoard(Long id) {
@@ -60,5 +64,25 @@ public class BoardService {
     public void heart(Board board, User user) {
         board.getUserHeart().add(user);
         this.boardRepository.save(board);
+    }
+
+    private Specification<Board> search(String keyword) {
+        return new Specification<Board>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Predicate toPredicate(Root<Board> root,
+                                         CriteriaQuery<?> query,
+                                         CriteriaBuilder criteriaBuilder) {
+                query.distinct(true);
+                Join<Board, User> u1 = root.join("user", JoinType.LEFT);
+                Join<Board, Comment> c = root.join("commentList", JoinType.LEFT);
+                Join<Comment, User> u2 = root.join("user", JoinType.LEFT);
+                return criteriaBuilder.or(criteriaBuilder.like(root.get("title"), "%" + keyword + "%"),
+                criteriaBuilder.like(root.get("content"), "%" + keyword + "%"),
+                criteriaBuilder.like(u1.get("username"), "%" + keyword + "%"),
+                criteriaBuilder.like(c.get("content"), "%" + keyword + "%"),
+                criteriaBuilder.like(u2.get("username"), "%" + keyword + "%"));
+            }
+        };
     }
 }
