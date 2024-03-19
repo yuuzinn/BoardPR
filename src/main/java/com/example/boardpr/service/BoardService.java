@@ -5,10 +5,12 @@ import com.example.boardpr.domain.Comment;
 import com.example.boardpr.domain.User;
 import com.example.boardpr.exception.NotFoundException;
 import com.example.boardpr.repository.BoardRepository;
+import com.example.boardpr.repository.CommentRepository;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
     public Page<Board> getList(int page, String keyword) {
         List<Sort.Order> sorts = new ArrayList<>();

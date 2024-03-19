@@ -35,11 +35,12 @@
             </div>
         </div>
     </div>
-    <!-- 답변의 갯수 표시 -->
-    <h5 class="border-bottom my-3 py-2"
-        th:text="|${#lists.size(board.commentList)}개의 댓글이 있습니다.|"></h5>
-    <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="comment : ${board.commentList}">
+
+    <!-- 댓글의 갯수 표시 -->
+    <h5 class="border-bottom my-3 py-2" th:text="|${comments.totalElements}개의 댓글이 있습니다.|"></h5>
+
+    <!-- 댓글 표시 -->
+    <div class="card my-3" th:each="comment : ${comments.content}">
         <a th:id="|comment_${comment.id}|"></a>
         <div class="card-body">
             <div class="card-text" th:utext="${@markdownUtil.markdown(comment.content)}"></div>
@@ -74,7 +75,35 @@
             </div>
         </div>
     </div>
-    <!-- 답변 작성 -->
+
+    <!-- 댓글 페이징 -->
+    <div th:if="${!comments.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!comments.hasPrevious} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${comments.number-1}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, comments.totalPages - 1)}"
+                th:if="${page >= comments.number-5 and page <= comments.number+5}"
+                th:classappend="${page == comments.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${!comments.hasNext} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${comments.number+1}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <form th:action="@{/board/detail/{id}(id=${board.id})}" method="get" id="searchForm">
+        <input type="hidden" id="page" name="page" th:value="${comments.number}">
+    </form>
+
+    <!-- 댓글 작성 -->
+
         <form th:action="@{|/comment/create/${board.id}|}" th:object="${commentForm}" method="post" class="my-3">
 
         <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
@@ -101,6 +130,21 @@
                 location.href = this.dataset.uri;
             };
         });
+    });
+</script>
+<script layout:fragment="script" type='text/javascript'>
+    const page_elements = document.getElementsByClassName("page-link");
+    Array.from(page_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            document.getElementById('page').value = this.dataset.page;
+            document.getElementById('searchForm').submit();
+        });
+    });
+    const btn_search = document.getElementById("btn_search");
+    btn_search.addEventListener('click', function() {
+        document.getElementById('keyword').value = document.getElementById('search_keyword').value;
+        document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+        document.getElementById('searchForm').submit();
     });
 </script>
 </html>

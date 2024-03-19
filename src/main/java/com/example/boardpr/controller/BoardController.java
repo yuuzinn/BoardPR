@@ -3,12 +3,17 @@ package com.example.boardpr.controller;
 import com.example.boardpr.controller.dto.BoardForm;
 import com.example.boardpr.controller.dto.CommentForm;
 import com.example.boardpr.domain.Board;
+import com.example.boardpr.domain.Comment;
 import com.example.boardpr.domain.User;
 import com.example.boardpr.service.BoardService;
+import com.example.boardpr.service.CommentService;
 import com.example.boardpr.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,6 +30,7 @@ import java.security.Principal;
 public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
+    private final CommentService commentService;
 
     @GetMapping("/list")
     public String list(Model model,
@@ -40,11 +46,18 @@ public class BoardController {
     public String detail(
             Model model,
             @PathVariable("id") Long id,
+            @RequestParam(defaultValue = "0") int page,
             CommentForm commentForm) {
         Board board = boardService.getBoard(id);
+        Pageable pageable = PageRequest
+                .of(page, 5, Sort
+                        .by(Sort.Direction.DESC, "createDate"));
+        Page<Comment> commentPage = commentService.getCommentsByBoardId(id, pageable);
         model.addAttribute("board", board);
+        model.addAttribute("comments", commentPage);
         return "board_detail";
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
