@@ -36,4 +36,7 @@ public class Board extends BaseEntity {
 
     @ManyToMany
     Set<User> userHeart;
+
+    @ManyToOne
+    private Category category;
 }

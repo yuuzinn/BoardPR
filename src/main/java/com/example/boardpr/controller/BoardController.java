@@ -3,13 +3,16 @@ package com.example.boardpr.controller;
 import com.example.boardpr.controller.dto.BoardForm;
 import com.example.boardpr.controller.dto.CommentForm;
 import com.example.boardpr.domain.Board;
+import com.example.boardpr.domain.Category;
 import com.example.boardpr.domain.Comment;
 import com.example.boardpr.domain.User;
 import com.example.boardpr.service.BoardService;
 import com.example.boardpr.service.CommentService;
 import com.example.boardpr.service.UserService;
+import com.example.boardpr.util.type.CategoryName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +30,7 @@ import java.security.Principal;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
+@Slf4j
 public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
@@ -75,12 +79,22 @@ public class BoardController {
             @Valid BoardForm boardForm,
             BindingResult bindingResult,
             Principal principal) {
+        System.out.println(boardForm);
         User user = this.userService.getUser(principal.getName());
         if (bindingResult.hasErrors()) {
             return "board_form";
         }
-        this.boardService.create(boardForm.getTitle(), boardForm.getContent(), user);
+        this.boardService.
+                create(boardForm.getTitle(),
+                        boardForm.getContent(),
+                        user,
+                        boardForm.getCategory());
         return "redirect:/board/list";
+    }
+
+    @ModelAttribute("categories")
+    public CategoryName[] categoryNames() {
+        return CategoryName.values();
     }
 
     @PreAuthorize("isAuthenticated()")

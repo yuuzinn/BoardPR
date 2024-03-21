@@ -1,11 +1,14 @@
 package com.example.boardpr.service;
 
 import com.example.boardpr.domain.Board;
+import com.example.boardpr.domain.Category;
 import com.example.boardpr.domain.Comment;
 import com.example.boardpr.domain.User;
 import com.example.boardpr.exception.NotFoundException;
 import com.example.boardpr.repository.BoardRepository;
+import com.example.boardpr.repository.CategoryRepository;
 import com.example.boardpr.repository.CommentRepository;
+import com.example.boardpr.util.type.CategoryName;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,7 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
+    private final CategoryRepository categoryRepository;
 
     public Page<Board> getList(int page, String keyword) {
         List<Sort.Order> sorts = new ArrayList<>();
@@ -43,12 +47,16 @@ public class BoardService {
         }
     }
 
-    public void create(String title, String content, User user) {
+    public void create(String title, String content, User user, String categoryName) {
+        CategoryName cnValueOf = CategoryName.valueOf(categoryName);
+        List<Category> byCategoryName = categoryRepository.findByCategoryName(cnValueOf);
+        Category category = byCategoryName.get(0);
         Board build = Board.builder()
                 .title(title)
                 .content(content)
                 .createDate(LocalDateTime.now())
                 .user(user)
+                .category(category)
                 .build();
         this.boardRepository.save(build);
     }
