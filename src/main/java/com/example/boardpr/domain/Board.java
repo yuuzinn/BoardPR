@@ -1,10 +1,7 @@
 package com.example.boardpr.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

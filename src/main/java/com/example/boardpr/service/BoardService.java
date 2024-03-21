@@ -61,10 +61,14 @@ public class BoardService {
         this.boardRepository.save(build);
     }
 
-    public void modify(Board board, String title, String content) {
+    public void modify(Board board, String title, String content, String categoryName) {
+        CategoryName cnValueOf = CategoryName.valueOf(categoryName);
+        List<Category> byCategoryName = categoryRepository.findByCategoryName(cnValueOf);
+        Category category = byCategoryName.get(0);
         board.setTitle(title);
         board.setContent(content);
         board.setModifyDate(LocalDateTime.now());
+        board.setCategory(category);
         this.boardRepository.save(board);
     }
 

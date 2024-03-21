@@ -124,7 +124,8 @@ public class BoardController {
         if (!question.getUser().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.boardService.modify(question, boardForm.getTitle(), boardForm.getContent());
+        this.boardService
+                .modify(question, boardForm.getTitle(), boardForm.getContent(), boardForm.getCategory());
         return String.format("redirect:/board/detail/%s", id);
     }
 
